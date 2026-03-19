@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-// Form1.cs
-using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Blackjack
@@ -25,8 +21,13 @@ namespace Blackjack
             playerHand = dealer.GiveCardsToPlayer();
             dealerHand = dealer.GiveCardsToDealer();
 
-            lblPlayer.Text = "Jouw kaarten: " + playerHand[0].Rank + " en " + playerHand[1].Rank;
-            lblDealer.Text = "Dealer kaarten: " + dealerHand[0].Rank + " en [verborgen]";
+            // laat de images van de kaarten zien van de speler
+            picPlayer1.Image = System.Drawing.Image.FromFile("Cards/" + playerHand[0].Rank + ".png");
+            picPlayer2.Image = System.Drawing.Image.FromFile("Cards/" + playerHand[1].Rank + ".png");
+
+            // laat de images van de kaarten zien van de dealer
+            picDealer1.Image = System.Drawing.Image.FromFile("Cards/" + dealerHand[0].Rank + ".png");
+            picDealer2.Image = System.Drawing.Image.FromFile("Cards/card_back.png"); // "geheime" kaart
         }
     }
 }

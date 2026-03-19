@@ -7,23 +7,24 @@ namespace Blackjack
     {
         private List<Card> cards = new List<Card>();
 
+        // pakt alle soorten kaarten en zet er _ tussen zodat hij de img ervan kan gebruiken
         public Deck()
         {
-            string[] ranks = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
-            string[] suits = { "Harten", "Ruiten", "Klaveren", "Schoppen" };
+            string[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace" };
+            string[] suits = { "clubs", "diamonds", "hearts", "spades" };
 
             foreach (string suit in suits)
             {
                 foreach (string rank in ranks)
                 {
                     Card card = new Card();
-                    card.Rank = rank + " " + suit;
+                    card.Rank = rank + "_of_" + suit;
                     card.IsFaceUp = true;
                     cards.Add(card);
                 }
             }
         }
-        // schudt de kaarten door alle kaarten 1 van te pakken
+
         public void Shuffle()
         {
             Random random = new Random();
@@ -36,7 +37,7 @@ namespace Blackjack
                 cards[j] = temp;
             }
         }
-        // dealt de kaarten 2 zichtbare voor speler + 1 zichtbare 1 "onzichtbare" voor Dealer
+
         public Card DealCard()
         {
             if (cards.Count == 0)
