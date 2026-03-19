@@ -6,7 +6,7 @@ namespace Blackjack
 {
     public class Card
     {
-        public string Rank { get; set; }  // bijv. "A", "K", "10"
-        public bool IsFaceUp { get; set; } // zichtbaar of verborgen
+        public string Rank { get; set; }  // Haalt de ranks op (Aas of nummer etc)
+        public bool IsFaceUp { get; set; } // houdt geheim voor dealer
     }
 }
