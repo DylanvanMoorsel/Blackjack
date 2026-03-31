@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Blackjack
 {
     public class Card
     {
-        public string Rank { get; set; }  // Haalt de ranks op (Aas of nummer etc)
-        public bool IsFaceUp { get; set; } // houdt geheim voor dealer
+        public string Rank { get; set; } // haalt de rank van de kaart op, zoals "2_of_clubs" of "ace_of_spades"
+        public bool IsFaceUp { get; set; } // geeft aan of de kaart open ligt (true) of gesloten (false)
     }
 }
