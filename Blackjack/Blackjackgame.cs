@@ -37,5 +37,9 @@ namespace Blackjack
             }
             return totaal;
         }
+        public string Hit()
+        {
+            return dealer.DrawCard();
+        }
     }
 }
