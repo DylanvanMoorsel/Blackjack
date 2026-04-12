@@ -9,6 +9,7 @@ namespace Blackjack
         public List<string> playerHand = new List<string>();
         public List<string> dealerHand = new List<string>();
 
+        // deelt kaarten aan speler en dealer
         public void Deal()
         {
             playerHand.Clear();
@@ -20,14 +21,22 @@ namespace Blackjack
             playerHand.Add(dealer.DrawCard());
         }
 
-        public void CheckDealerHand()
+        // trekt een extra kaart
+        public string Hit()
         {
-            while (GetTotal(dealerHand) < 17)
+            return dealer.DrawCard();
+        }
+
+        // speler trekt automatisch kaarten tot 17 of meer
+        public void CheckPlayerHand()
+        {
+            while (GetTotal(playerHand) < 17)
             {
-                dealerHand.Add(dealer.DrawCard());
+                playerHand.Add(dealer.DrawCard());
             }
         }
 
+        // berekent het totaal van een hand
         public int GetTotal(List<string> hand)
         {
             int totaal = 0;
@@ -36,10 +45,6 @@ namespace Blackjack
                 totaal += dealer.GetCardValue(card);
             }
             return totaal;
-        }
-        public string Hit()
-        {
-            return dealer.DrawCard();
         }
     }
 }

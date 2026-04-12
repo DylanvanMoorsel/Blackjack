@@ -6,7 +6,6 @@ namespace Blackjack
 {
     public partial class Form1 : Form
     {
-        // maakt een nieuw spel aan
         BlackjackGame game = new BlackjackGame();
 
         public Form1()
@@ -27,32 +26,54 @@ namespace Blackjack
             MessageBox.Show("Spel gestart!");
         }
 
-        // deal knop: deelt kaarten aan speler en dealer
+        // deal knop: deelt kaarten en laat speler automatisch trekken
         private void btnDelen_Click(object sender, EventArgs e)
         {
             game.Deal();
-            game.CheckDealerHand();
+            game.CheckPlayerHand();
 
+            // laat kaarten zien
             picDealer1.Image = Image.FromFile("Cards/" + game.dealerHand[0] + ".png");
             picDealer2.Image = Image.FromFile("Cards/" + game.dealerHand[1] + ".png");
             picPlayer1.Image = Image.FromFile("Cards/" + game.playerHand[0] + ".png");
             picPlayer2.Image = Image.FromFile("Cards/" + game.playerHand[1] + ".png");
+
+            // toon extra kaart van speler als die er is
+            if (game.playerHand.Count > 2)
+            {
+                picPlayer3.Image = Image.FromFile("Cards/" + game.playerHand[2] + ".png");
+                picPlayer3.Visible = true;
+            }
+
+            // dealer krijgt keuze om te hitten of standen
+            DealerKeuze();
         }
 
-        // hit knop: trekt extra kaart en toont die op het scherm
-        private void btnHit_Click(object sender, EventArgs e)
+        // dealer kiest hit of stand
+        private void DealerKeuze()
         {
-            string newCard = game.Hit();
-            game.playerHand.Add(newCard);
-            picPlayer3.Image = Image.FromFile("Cards/" + newCard + ".png");
-            picPlayer3.Visible = true;
-            MessageBox.Show("Totaal: " + game.GetTotal(game.playerHand));
-        }
+            int dealerPunten = game.GetTotal(game.dealerHand);
+            int spelerPunten = game.GetTotal(game.playerHand);
 
-        // stand knop: stopt en bepaalt winnaar
-        private void btnStand_Click(object sender, EventArgs e)
-        {
-            BepaalWinnaar();
+            string bericht = "Dealer punten: " + dealerPunten + "\nSpeler punten: " + spelerPunten + "\n\nWil je een extra kaart?\nJa = Hit\nNee = Stand";
+            DialogResult keus = MessageBox.Show(bericht, "Hit of Stand?", MessageBoxButtons.YesNo);
+
+            if (keus == DialogResult.Yes)
+            {
+                // dealer trekt extra kaart
+                string newCard = game.Hit();
+                game.dealerHand.Add(newCard);
+                picDealer3.Image = Image.FromFile("Cards/" + newCard + ".png");
+                picDealer3.Visible = true;
+
+                // dealer krijgt opnieuw de keuze
+                DealerKeuze();
+            }
+            else
+            {
+                // dealer stopt en winnaar wordt bepaald
+                BepaalWinnaar();
+            }
         }
 
         // vergelijkt de punten en vraagt dealer wie wint
