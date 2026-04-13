@@ -1,54 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Blackjack
 {
     public partial class Form1 : Form
     {
-        private Dealer dealer;
-        private List<Card> playerHand;
-        private List<Card> dealerHand;
+        BlackjackGame game = new BlackjackGame();
+        FeedbackSysteem feedbackSysteem = new FeedbackSysteem();
+        WinnaarKeuze winnaarKeuze = new WinnaarKeuze();
 
         public Form1()
         {
             InitializeComponent();
         }
 
-        // shuffle knop
+        // shuffle
         private void btnShuffle_Click(object sender, EventArgs e)
         {
-            dealer = new Dealer();
+            game = new BlackjackGame();
+            feedbackSysteem = new FeedbackSysteem();
             MessageBox.Show("Deck is geschud!");
         }
 
-        // start knop
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (dealer == null)
-            {
-                MessageBox.Show("Shuffle eerst!");
-                return;
-            }
             MessageBox.Show("Spel gestart!");
         }
 
-        // deal knop
         private void btnDelen_Click(object sender, EventArgs e)
         {
-            if (dealer == null)
+            // reset kaarten van vorige ronde
+            picPlayer3.Visible = false;
+            picDealer3.Visible = false;
+
+            game.Deal();
+            game.CheckPlayerHand();
+
+            // kaarten laten zien
+            picDealer1.Image = Image.FromFile("Cards/" + game.dealerHand[0] + ".png");
+            picDealer2.Image = Image.FromFile("Cards/" + game.dealerHand[1] + ".png");
+            picPlayer1.Image = Image.FromFile("Cards/" + game.playerHand[0] + ".png");
+            picPlayer2.Image = Image.FromFile("Cards/" + game.playerHand[1] + ".png");
+
+            if (game.playerHand.Count > 2)
             {
-                MessageBox.Show("Shuffle eerst!");
-                return;
+                picPlayer3.Image = Image.FromFile("Cards/" + game.playerHand[2] + ".png");
+                picPlayer3.Visible = true;
             }
 
-            playerHand = dealer.GiveCardsToPlayer();
-            dealerHand = dealer.GiveCardsToDealer();
+            DealerKeuze();
+        }
 
-            picPlayer1.Image = System.Drawing.Image.FromFile("Cards/" + playerHand[0].Rank + ".png");
-            picPlayer2.Image = System.Drawing.Image.FromFile("Cards/" + playerHand[1].Rank + ".png");
-            picDealer1.Image = System.Drawing.Image.FromFile("Cards/" + dealerHand[0].Rank + ".png");
-            picDealer2.Image = System.Drawing.Image.FromFile("Cards/card_back.png");
+        private void DealerKeuze()
+        {
+            int dealerPunten = game.GetTotal(game.dealerHand);
+            int spelerPunten = game.GetTotal(game.playerHand);
+
+            // popup voor hit of stand
+            string bericht = "Dealer punten: " + dealerPunten + "\nSpeler punten: " + spelerPunten + "\n\nWil je een extra kaart?\nJa = Hit\nNee = Stand";
+            DialogResult keus = MessageBox.Show(bericht, "Hit of Stand?", MessageBoxButtons.YesNo);
+
+            if (keus == DialogResult.Yes)
+            {
+                string feedback = feedbackSysteem.ValideerKeuze(true, dealerPunten);
+                MessageBox.Show(feedback);
+
+                if (!feedbackSysteem.MagVerderSpelen())
+                {
+                    MessageBox.Show(feedbackSysteem.GeefEvaluatie(dealerPunten), "Spel gestopt");
+                    return;
+                }
+
+                // nieuwe kaart trekken
+                string newCard = game.Hit();
+                game.dealerHand.Add(newCard);
+                picDealer3.Image = Image.FromFile("Cards/" + newCard + ".png");
+                picDealer3.Visible = true;
+
+                DealerKeuze();
+            }
+            else
+            {
+                string feedback = feedbackSysteem.ValideerKeuze(false, dealerPunten);
+                MessageBox.Show(feedback);
+
+                if (!feedbackSysteem.MagVerderSpelen())
+                {
+                    MessageBox.Show(feedbackSysteem.GeefEvaluatie(dealerPunten), "Spel gestopt");
+                    return;
+                }
+
+                // evaluatie tonen
+                MessageBox.Show(feedbackSysteem.GeefEvaluatie(dealerPunten), "Evaluatie");
+
+                // winnaar bepalen en tonen
+                string resultaat = winnaarKeuze.BepaalWinnaar(spelerPunten, dealerPunten);
+                MessageBox.Show(resultaat);
+            }
         }
     }
 }
