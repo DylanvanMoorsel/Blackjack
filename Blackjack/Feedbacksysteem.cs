@@ -1,30 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Blackjack
+﻿namespace Blackjack
 {
-    public class Dealer
+    internal class FeedbackSysteem
     {
-        private Deck deck = new Deck();
-        private Random random = new Random();
+        public int score = 0;
+        public int strafpunten = 0;
 
-        // trekt een willekeurige kaart uit het deck
-        public string DrawCard()
+        // controleert of de dealer de juiste keuze heeft gemaakt
+        public string ValideerKeuze(bool dealerGekozenHit, int dealerPunten)
         {
-            int index = random.Next(deck.Cards.Count);
-            string card = deck.Cards[index];
-            deck.Cards.RemoveAt(index);
-            return card;
+            if (dealerGekozenHit && dealerPunten < 17)
+            {
+                score += 1;
+                return "Correcte keuze! +1 punt";
+            }
+            else if (!dealerGekozenHit && dealerPunten >= 17)
+            {
+                score += 1;
+                return "Correcte keuze! +1 punt";
+            }
+            else
+            {
+                score -= 1;
+                strafpunten += 1;
+                return "Foute keuze! -1 punt";
+            }
         }
 
-        // geeft de waarde van een kaart terug
-        public int GetCardValue(string card)
+        // controleert of de dealer nog verder mag
+        public bool MagVerderSpelen()
         {
-            string rank = card.Split('_')[0];
+            return strafpunten < 2;
+        }
 
-            if (rank == "jack" || rank == "queen" || rank == "king") return 10;
-            if (rank == "ace") return 11;
-            return int.Parse(rank);
+        // geeft de eindevaluatie terug
+        public string GeefEvaluatie(int dealerPunten)
+        {
+            string evaluatie = "Score: " + score + "\n\n";
+            // als er 2 strafpunten zijn, is het spel gestopt
+            if (strafpunten >= 2)
+                evaluatie += "Je hebt 2 foute keuzes gemaakt. Spel gestopt.";
+            // als de dealer boven 21 gaat, is dat ook een fout
+            else if (dealerPunten > 21)
+                evaluatie += "Verbeterpunt: Je bent boven 21 gegaan.";
+            //  als de dealer onder 17 blijft, is dat ook een fout
+            else if (dealerPunten < 17)
+                evaluatie += "Verbeterpunt: Je had nog een kaart moeten trekken.";
+            // als er geen fouten zijn, is het een goed resultaat
+            else
+                evaluatie += "Goed gedaan! Je hebt correct gespeeld.";
+
+            return evaluatie;
         }
     }
 }
