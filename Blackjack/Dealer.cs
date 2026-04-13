@@ -5,33 +5,26 @@ namespace Blackjack
 {
     public class Dealer
     {
-        private Deck deck;
+        private Deck deck = new Deck();
+        private Random random = new Random();
 
-        public Dealer()
+        // trekt een willekeurige kaart uit het deck
+        public string DrawCard()
         {
-            // Bij het aanmaken van de dealer wordt het deck direct geschud
-            deck = new Deck();
-            deck.Shuffle();
+            int index = random.Next(deck.Cards.Count);
+            string card = deck.Cards[index];
+            deck.Cards.RemoveAt(index);
+            return card;
         }
 
-        // Pak 2 kaarten voor de speler (beide open)
-        public List<Card> GiveCardsToPlayer()
+        // geeft de waarde van een kaart terug
+        public int GetCardValue(string card)
         {
-            List<Card> hand = new List<Card>();
+            string rank = card.Split('_')[0];
 
-            hand.Add(deck.DealCard());
-            hand.Add(deck.DealCard());
-
-            return hand;
-        }
-
-        // Pak 2 kaarten voor de dealer (1 open, 1 dicht)
-        public List<Card> GiveCardsToDealer()
-        {
-            List<Card> hand = new List<Card>();
-            hand.Add(deck.DealCard());
-            hand.Add(deck.DealCard());
-            return hand;
+            if (rank == "jack" || rank == "queen" || rank == "king") return 10;
+            if (rank == "ace") return 11;
+            return int.Parse(rank);
         }
     }
 }
