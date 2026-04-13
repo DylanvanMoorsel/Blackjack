@@ -16,21 +16,25 @@ namespace Blackjack
             InitializeComponent();
         }
 
-        //shuffle
+        // shuffle
         private void btnShuffle_Click(object sender, EventArgs e)
         {
             game = new BlackjackGame();
             feedbackSysteem = new FeedbackSysteem();
             MessageBox.Show("Deck is geschud!");
         }
-        //start
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Spel gestart!");
         }
-        //delen
+
         private void btnDelen_Click(object sender, EventArgs e)
         {
+            // reset kaarten van vorige ronde
+            picPlayer3.Visible = false;
+            picDealer3.Visible = false;
+
             game.Deal();
             game.CheckPlayerHand();
 
@@ -57,12 +61,12 @@ namespace Blackjack
             // popup voor hit of stand
             string bericht = "Dealer punten: " + dealerPunten + "\nSpeler punten: " + spelerPunten + "\n\nWil je een extra kaart?\nJa = Hit\nNee = Stand";
             DialogResult keus = MessageBox.Show(bericht, "Hit of Stand?", MessageBoxButtons.YesNo);
-            //dialog is voor ja of nee knoppen, ja = hit, nee = stand
+
             if (keus == DialogResult.Yes)
             {
                 string feedback = feedbackSysteem.ValideerKeuze(true, dealerPunten);
                 MessageBox.Show(feedback);
-                // controleer of de dealer nog verder mag spelen
+
                 if (!feedbackSysteem.MagVerderSpelen())
                 {
                     MessageBox.Show(feedbackSysteem.GeefEvaluatie(dealerPunten), "Spel gestopt");
@@ -78,10 +82,10 @@ namespace Blackjack
                 DealerKeuze();
             }
             else
-            {// controleer of de dealer de juiste keuze heeft gemaakt
+            {
                 string feedback = feedbackSysteem.ValideerKeuze(false, dealerPunten);
                 MessageBox.Show(feedback);
-                // controleer of de dealer nog verder mag spelen
+
                 if (!feedbackSysteem.MagVerderSpelen())
                 {
                     MessageBox.Show(feedbackSysteem.GeefEvaluatie(dealerPunten), "Spel gestopt");
@@ -90,7 +94,8 @@ namespace Blackjack
 
                 // evaluatie tonen
                 MessageBox.Show(feedbackSysteem.GeefEvaluatie(dealerPunten), "Evaluatie");
-                // bepaal winnaar
+
+                // winnaar bepalen en tonen
                 string resultaat = winnaarKeuze.BepaalWinnaar(spelerPunten, dealerPunten);
                 MessageBox.Show(resultaat);
             }
